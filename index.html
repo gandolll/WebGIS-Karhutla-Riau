@@ -6,370 +6,56 @@
 <title>WebGIS Karhutla Riau</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <style>
-  * { box-sizing: border-box; }
-  html, body { margin: 0; height: 100%; }
-  body {
-    display: flex; flex-direction: column;
-    font-family: Inter, system-ui, -apple-system, "Segoe UI", sans-serif;
-    color: #1E2420; background: #F4F2EC;
-  }
-  header { background: #14231C; color: #F4F1EA; padding: 10px 16px; flex: none; }
-  header h1 { margin: 0; font-size: 17px; line-height: 1.3; }
-  header p { margin: 2px 0 0; font-size: 12px; color: #BAC6BE; }
-  #app { flex: 1; min-height: 0; display: flex; }
-  #side {
-    width: 340px; flex: none; overflow-y: auto; padding: 14px;
-    background: #FFFFFF; border-right: 1px solid #DDD9CF;
-  }
-  #mapwrap { flex: 1; min-width: 0; position: relative; }
-  #map { position: absolute; inset: 0; }
-  #loading {
-    position: absolute; inset: 0; z-index: 1000; display: flex;
-    align-items: center; justify-content: center; padding: 24px; text-align: center;
-    background: rgba(244,242,236,0.85); font-size: 14px;
-  }
-  .sec { margin-bottom: 16px; }
-  .sec h2 {
-    margin: 0 0 8px; font-size: 11px; letter-spacing: 0.06em;
-    text-transform: uppercase; color: #5C5A52;
-  }
-  select, button { font: inherit; font-size: 13px; min-height: 38px; }
-  select {
-    width: 100%; padding: 0 8px; border: 1px solid #C9C4B8;
-    border-radius: 8px; background: #FFFFFF; color: #1E2420;
-  }
-  button {
-    border: 1px solid #14231C; background: #14231C; color: #FFFFFF;
-    border-radius: 8px; padding: 0 12px; cursor: pointer;
-  }
-  .row { display: flex; align-items: center; gap: 8px; }
-  .between { justify-content: space-between; }
-  .mt { margin-top: 8px; }
-  input[type=range] { width: 100%; accent-color: #E0532F; }
-  label.chk { display: flex; align-items: center; gap: 8px; font-size: 13px; min-height: 34px; cursor: pointer; }
-  label.chk input { width: 18px; height: 18px; accent-color: #14231C; }
-  .muted { color: #5C5A52; font-size: 12px; }
-  .legend-title { font-size: 13px; font-weight: 600; margin: 0 0 6px; }
-  .legend-item { display: flex; align-items: center; gap: 8px; font-size: 12px; margin: 4px 0; }
-  .sw { width: 22px; height: 14px; border-radius: 3px; border: 1px solid rgba(0,0,0,0.15); flex: none; }
-  #stats { font-size: 13px; line-height: 1.5; }
-  #info { font-size: 12px; line-height: 1.5; }
-  #info h3 { margin: 0 0 2px; font-size: 14px; }
-  #info table { width: 100%; border-collapse: collapse; }
-  #info td { padding: 3px 0; border-bottom: 1px solid #F0EDE6; vertical-align: top; }
-  #info td:last-child { text-align: right; font-weight: 600; }
-  #info .sub { margin: 10px 0 4px; font-weight: 600; font-size: 12px; }
-  .about { font-size: 12px; line-height: 1.5; color: #4A4840; background: #FAF7EF; border: 1px solid #ECE6D6; border-radius: 10px; padding: 10px; }
-  @media (max-width: 760px) {
-    #app { flex-direction: column; overflow-y: auto; }
-    #mapwrap { flex: none; height: 62vh; }
-    #side { width: 100%; border-right: 0; border-top: 1px solid #DDD9CF; overflow: visible; }
-  }
+:root{--green:#142b20;--paper:#f4f3ee;--line:#dedbd2;--muted:#696b65;--red:#c8422e}*{box-sizing:border-box}html,body{height:100%;margin:0;font:14px/1.45 Inter,system-ui,-apple-system,"Segoe UI",sans-serif;color:#202720;background:var(--paper)}body{display:flex;flex-direction:column}header{background:var(--green);color:white;padding:12px 18px;flex:none}header h1{font-size:18px;margin:0}header p{font-size:12px;color:#c6d1c9;margin:3px 0 0}#app{display:flex;min-height:0;flex:1}aside{width:360px;flex:none;background:#fff;padding:14px;overflow:auto;border-right:1px solid var(--line)}#mapwrap{position:relative;min-width:0;flex:1}#map{position:absolute;inset:0}.sec{margin:0 0 16px}.sec h2{font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:#62655e;margin:0 0 8px}label{font-size:12px;color:#53584f}select,button{font:inherit;min-height:36px;border:1px solid #c9c8bf;border-radius:7px;padding:6px 9px;background:#fff;color:#202720}select{width:100%;margin:3px 0 8px}button{cursor:pointer;background:var(--green);color:#fff;border-color:var(--green)}.row{display:flex;gap:8px;align-items:center}.row>*{flex:1}.check{display:flex;align-items:center;gap:8px;margin:5px 0}.check input{width:17px;height:17px;accent-color:var(--green)}.kpis{display:grid;grid-template-columns:1fr 1fr;gap:7px}.kpi{padding:9px;border:1px solid #e8e5dc;border-radius:8px;background:#fbfaf7}.kpi b{display:block;font-size:18px;color:var(--green)}.kpi span{font-size:11px;color:var(--muted)}.legend-item{display:flex;align-items:center;gap:8px;margin:4px 0;font-size:12px}.sw{width:20px;height:14px;border:1px solid #7775;border-radius:3px;flex:none}.muted{font-size:12px;color:var(--muted)}.about{font-size:12px;background:#faf7ef;border:1px solid #ece6d6;border-radius:8px;padding:9px;color:#4a4840}.chartbox{height:175px;margin:6px 0 12px}.error{color:#8e241c;background:#fff2ef;border:1px solid #f0c8bf;padding:9px;border-radius:7px;white-space:pre-wrap;overflow-wrap:anywhere}#loading{position:absolute;inset:0;z-index:1000;display:grid;place-items:center;text-align:center;padding:25px;background:#f4f3eee8}.leaflet-popup-content{min-width:210px}.leaflet-popup-content table{width:100%;border-collapse:collapse}.leaflet-popup-content td{padding:2px 3px;border-bottom:1px solid #eee}.leaflet-popup-content td:last-child{text-align:right;font-weight:600}@media(max-width:760px){#app{flex-direction:column;overflow:auto}#mapwrap{flex:none;height:58vh;min-height:330px}aside{width:100%;overflow:visible;border-right:0;border-top:1px solid var(--line)}}
 </style>
 </head>
 <body>
-<header>
-  <h1>Peta Bahaya &amp; Dampak Kebakaran Hutan dan Lahan · Provinsi Riau</h1>
-  <p>WebGIS PjBL SIG 2026 · Kelompok 1 Kelas 05 · GD4103 Sistem Informasi Geografis</p>
-</header>
-
-<div id="app">
-  <aside id="side" aria-label="Panel kontrol">
-    <section class="sec">
-      <h2>1 · Layer utama</h2>
-      <label for="mode" class="muted">Tampilkan</label>
-      <select id="mode">
-        <option value="rentan">Kerentanan statis (indeks FR)</option>
-        <option value="bahaya" selected>Bahaya bulanan</option>
-        <option value="dampak">Dampak (penduduk terpapar)</option>
-        <option value="fr">Nilai FR per parameter</option>
-      </select>
-      <div id="frBox" class="mt" hidden>
-        <label for="frSel" class="muted">Parameter</label>
-        <select id="frSel"></select>
-      </div>
-      <div id="monthBox" class="mt">
-        <div class="row between">
-          <label for="month" style="font-size:13px">Bulan: <b id="monthLbl"></b> 2026</label>
-          <button id="play" type="button">▶ Putar</button>
-        </div>
-        <input id="month" type="range" min="1" max="12" step="1">
-      </div>
-    </section>
-
-    <section class="sec">
-      <h2>2 · Layer tambahan</h2>
-      <label class="chk" id="fireRow"><input type="checkbox" id="fireChk" checked> Titik api 2026</label>
-      <label class="chk" id="kabRow"><input type="checkbox" id="kabChk" checked> Batas kabupaten/kota</label>
-    </section>
-
-    <section class="sec">
-      <h2>Legenda</h2>
-      <div id="legend"></div>
-    </section>
-
-    <section class="sec">
-      <h2>Ringkasan</h2>
-      <div id="stats" class="muted">–</div>
-    </section>
-
-    <section class="sec">
-      <h2>Detail sel</h2>
-      <div id="info"><span class="muted">Klik salah satu sel di peta.</span></div>
-      <canvas id="dcChart" height="170" hidden></canvas>
-    </section>
-
-    <section class="sec about">
-      <strong>Tentang</strong><br>
-      Kerentanan: indeks Frequency Ratio (jumlah FR semua parameter) pada grid 5 km, dibagi 5 kelas.
-      Bahaya: kerentanan × kelas Drought Code bulanan (CEMS Copernicus).
-      Dampak: penduduk (WorldPop) di sel bahaya tinggi–sangat tinggi.
-      Titik api: SiPongi KLHK.
-    </section>
-  </aside>
-
-  <div id="mapwrap">
-    <div id="map" role="region" aria-label="Peta"></div>
-    <div id="loading">Memuat data…</div>
-  </div>
-</div>
-
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<header><h1>WEBGIS PEMANTAUAN KEBAKARAN HUTAN DAN LAHAN · PROVINSI RIAU</h1><p>Sistem Informasi Spasial untuk Monitoring dan Analisis Risiko Karhutla</p></header>
+<div id="app"><aside aria-label="Filter dan ringkasan">
+<section class="sec"><h2>Filter wilayah & kejadian</h2><label for="kabSel">Kabupaten/kota</label><select id="kabSel"><option value="">Semua wilayah</option></select><div class="row"><div><label for="yearSel">Tahun titik api</label><select id="yearSel"><option value="">Semua tahun</option></select></div><div><label for="monthSel">Bulan (titik api)</label><select id="monthSel"><option value="">Semua bulan</option></select></div></div><label for="mode">Layer tematik</label><select id="mode"><option value="rentan">Kerentanan</option><option value="bahaya">Bahaya bulanan</option><option value="dc">Drought Code</option><option value="pop">Populasi</option><option value="fr">Nilai FR per parameter</option></select><div id="hazMonthBox"><label for="hazMonth">Bulan bahaya/DC 2026 (Jan–Okt)</label><select id="hazMonth"></select></div><div id="frBox" hidden><label for="frSel">Parameter FR</label><select id="frSel"></select></div><div class="row" style="margin-top:5px"><button id="reset">Reset filter</button><button id="fit">Zoom ke data</button></div></section>
+<section class="sec"><h2>Layer tambahan</h2><label class="check"><input type="checkbox" id="fireChk" checked> Titik api</label><label class="check"><input type="checkbox" id="kabChk" checked> Batas kabupaten/kota</label></section>
+<section class="sec"><h2>Indikator (mengikuti wilayah)</h2><div class="kpis"><div class="kpi"><b id="kFire">–</b><span>Titik api sesuai filter</span></div><div class="kpi"><b id="kBurn">–</b><span>Grid riwayat terbakar</span></div><div class="kpi"><b id="kKab">–</b><span>Kabupaten/kota</span></div><div class="kpi"><b id="kPop">–</b><span>Total populasi grid</span></div><div class="kpi"><b id="kHigh">–</b><span>Grid bahaya tinggi*</span></div></div><p class="muted">*Kelas 4–5 untuk bulan bahaya terpilih.</p></section>
+<section class="sec"><h2>Legenda</h2><div id="legend" class="muted">Memuat data…</div></section>
+<section class="sec"><h2>Titik api per tahun</h2><div class="chartbox"><canvas id="yearChart"></canvas></div><h2>Titik api per bulan</h2><div class="chartbox"><canvas id="monthChart"></canvas></div></section>
+<section class="sec"><h2>Detail grid</h2><div id="info" class="muted">Klik salah satu sel grid di peta.</div></section>
+<section class="about"><b>Catatan data</b><br>Kerentanan menggunakan kelas <code>rentan</code> (1–5). Jika kolom itu tidak tersedia, peta mengelompokkan <code>indeks</code> atau jumlah FR menjadi 5 kuantil (perkiraan visual, bukan klasifikasi GEE). Bahaya memakai <code>bhy_01</code>–<code>bhy_10</code>; DC memakai <code>dc_01</code>–<code>dc_10</code>. Batas kelas DC_BREAKS dari skrip GEE belum diberikan, jadi legenda DC berbasis kuantil data. Pastikan sumber titik api lengkap berformat GeoJSON biasa; pointer Git LFS tidak dapat dibaca oleh GitHub Pages.</section>
+</aside><main id="mapwrap"><div id="map" role="region" aria-label="Peta interaktif"></div><div id="loading">Memuat grid dan batas wilayah…</div></main></div>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script><script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 <script>
-/* ================= 1. KONFIGURASI (ubah bagian ini saja) ================= */
-const CONFIG = {
-  gridUrl: 'data/grid.geojson',              // grid 5 km berisi semua kolom hasil
-  kabUrl:  'data/kab.geojson',               // batas kab/kota ('' kalau tidak ada)
-  fireUrl: 'data/titik_api_2026.geojson',    // titik api 2026 ('' kalau tidak ada)
-  fireMonthField: 'bulan',                   // kolom bulan (1–12) di titik api ('' kalau tidak ada)
-  field: {
-    id: 'grid_id', kab: 'kab',
-    rentan: 'rentan',   // kelas kerentanan 1–5
-    indeks: 'indeks',   // indeks FR
-    bahaya: 'bhy_',     // bhy_01 … bhy_12 (kelas bahaya 1–5)
-    dc: 'dc_',          // dc_01 … dc_12 (opsional, untuk grafik)
-    pop: 'pop'          // penduduk per sel
-  },
-  frFields: [
-    ['fr_tutup',  'Tutupan lahan'],
-    ['fr_ubah',   'Perubahan tutupan'],
-    ['fr_gambut', 'Proporsi gambut'],
-    ['fr_kanal',  'Kerapatan kanal'],
-    ['fr_jalan',  'Kerapatan jalan'],
-    ['fr_hujan',  'Curah hujan'],
-    ['fr_elev',   'Elevasi']
-  ],
-  lastMonth: 12,     // bulan terakhir yang ada datanya (mis. 10 kalau DC baru sampai Oktober)
-  startMonth: 9,
-  popMax: 5000       // batas atas kelas warna penduduk per sel
-};
-
-/* ================= 2. KONSTANTA ================= */
-const F = CONFIG.field;
-const HAZ = ['#FFF4B8', '#FDCB6E', '#F59E42', '#E0532F', '#9E1A1A'];
-const HAZ_L = ['Sangat rendah', 'Rendah', 'Sedang', 'Tinggi', 'Sangat tinggi'];
-const POP = ['#EFE7F7', '#CDB8E6', '#A586D1', '#7651B5', '#4A2A86'];
-const LOW = '#DEDBD3';
-const FRC = ['#2166AC', '#93B7D6', '#F7F7F7', '#F0A77A', '#E66101'];
-const FRL = ['< 0,80 (kurang rawan)', '0,80–0,95', '0,95–1,05 (netral)', '1,05–1,20', '> 1,20 (lebih rawan)'];
-const MON = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
-
-const state = { mode: 'bahaya', month: Math.min(CONFIG.startMonth, CONFIG.lastMonth), fr: CONFIG.frFields[0][0], selected: null };
-const pad = m => String(m).padStart(2, '0');
-const num = v => (v === null || v === undefined || v === '' || isNaN(Number(v))) ? null : Number(v);
-const fmt = (v, d = 2) => num(v) === null ? '–' : Number(v).toLocaleString('id-ID', { minimumFractionDigits: d, maximumFractionDigits: d });
-const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
-const $ = id => document.getElementById(id);
-
-/* ================= 3. PETA ================= */
-const map = L.map('map', { preferCanvas: true }).setView([0.5, 102], 7);
-const light = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
-  attribution: '&copy; OpenStreetMap contributors &copy; CARTO', subdomains: 'abcd', maxZoom: 19
-}).addTo(map);
-const imagery = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
-  attribution: 'Tiles &copy; Esri', maxZoom: 19
-});
-L.control.layers({ 'Peta': light, 'Satelit': imagery }, null, { position: 'topright' }).addTo(map);
-L.control.scale({ imperial: false }).addTo(map);
-
-let gridData, gridLayer, kabLayer, fireData, fireLayer, selLayer, chart, timer;
-
-/* ================= 4. WARNA ================= */
-function popColor(p) {
-  if (p === null) return POP[0];
-  return POP[Math.min(4, Math.floor(p / (CONFIG.popMax / 5)))];
-}
-function frColor(v) {
-  return v < 0.8 ? FRC[0] : v < 0.95 ? FRC[1] : v < 1.05 ? FRC[2] : v < 1.2 ? FRC[3] : FRC[4];
-}
-function colorOf(p) {
-  const m = pad(state.month);
-  if (state.mode === 'rentan') { const v = num(p[F.rentan]); return v ? HAZ[v - 1] : null; }
-  if (state.mode === 'bahaya') { const v = num(p[F.bahaya + m]); return v ? HAZ[v - 1] : null; }
-  if (state.mode === 'dampak') {
-    const b = num(p[F.bahaya + m]);
-    if (!b) return null;
-    return b < 4 ? LOW : popColor(num(p[F.pop]));
-  }
-  const v = num(p[state.fr]);
-  return v === null ? null : frColor(v);
-}
-function style(f) {
-  const c = colorOf(f.properties);
-  return { color: '#FFFFFF', weight: 0.3, opacity: c ? 0.7 : 0, fillColor: c || '#000000', fillOpacity: c ? 0.85 : 0 };
-}
-
-/* ================= 5. LEGENDA & RINGKASAN ================= */
-function legendHTML(title, colors, labels) {
-  return '<p class="legend-title">' + esc(title) + '</p>' +
-    colors.map((c, i) => '<div class="legend-item"><span class="sw" style="background:' + c + '"></span>' + esc(labels[i]) + '</div>').join('');
-}
-function renderLegend() {
-  const mon = MON[state.month - 1] + ' 2026';
-  let html;
-  if (state.mode === 'rentan') html = legendHTML('Kelas kerentanan (indeks FR)', HAZ, HAZ_L);
-  else if (state.mode === 'bahaya') html = legendHTML('Kelas bahaya · ' + mon, HAZ, HAZ_L);
-  else if (state.mode === 'dampak') {
-    const st = CONFIG.popMax / 5, lab = [];
-    for (let i = 0; i < 5; i++) {
-      lab.push(i < 4 ? fmt(i * st, 0) + '–' + fmt((i + 1) * st, 0) + ' jiwa' : '> ' + fmt(i * st, 0) + ' jiwa');
-    }
-    html = legendHTML('Penduduk di sel bahaya tinggi–sangat tinggi · ' + mon, POP.concat([LOW]), lab.concat(['Bahaya rendah–sedang']));
-  } else {
-    const lbl = CONFIG.frFields.find(f => f[0] === state.fr)[1];
-    html = legendHTML('Nilai FR · ' + lbl, FRC, FRL);
-  }
-  html += '<div class="legend-item" style="margin-top:8px"><span class="sw" style="background:#111;border-radius:50%;width:10px;height:10px;margin:0 6px"></span>Titik api</div>';
-  $('legend').innerHTML = html;
-}
-function renderStats() {
-  const useRentan = state.mode === 'rentan' || state.mode === 'fr';
-  const prop = useRentan ? F.rentan : F.bahaya + pad(state.month);
-  let n = 0, total = 0, pop = 0;
-  gridData.features.forEach(f => {
-    const v = num(f.properties[prop]);
-    if (v === null) return;
-    total++;
-    if (v >= 4) { n++; pop += num(f.properties[F.pop]) || 0; }
-  });
-  if (!total) { $('stats').textContent = 'Kolom ' + prop + ' belum ada di data.'; return; }
-  const head = useRentan ? 'Kerentanan' : 'Bahaya ' + MON[state.month - 1];
-  $('stats').innerHTML = '<b>' + esc(head) + ' tinggi–sangat tinggi:</b> ' + fmt(n, 0) + ' sel (' +
-    fmt(n / total * 100, 1) + '%)<br><b>Penduduk di sel tersebut:</b> ± ' + fmt(pop, 0) + ' jiwa';
-}
-
-/* ================= 6. DETAIL SEL ================= */
-function renderInfo() {
-  const f = state.selected;
-  if (!f) return;
-  const p = f.properties, m = pad(state.month);
-  const k = num(p[F.rentan]), b = num(p[F.bahaya + m]);
-  let rows = [
-    ['Kerentanan', k ? HAZ_L[k - 1] : '–'],
-    ['Indeks FR', fmt(p[F.indeks])],
-    ['Bahaya ' + MON[state.month - 1], b ? HAZ_L[b - 1] : '–'],
-    ['Drought Code ' + MON[state.month - 1], fmt(p[F.dc + m], 0)],
-    ['Penduduk', num(p[F.pop]) === null ? '–' : fmt(p[F.pop], 0) + ' jiwa']
-  ];
-  let html = '<h3>Sel ' + esc(p[F.id] ?? '–') + (p[F.kab] ? ' · ' + esc(p[F.kab]) : '') + '</h3>' +
-    '<table>' + rows.map(r => '<tr><td>' + esc(r[0]) + '</td><td>' + esc(r[1]) + '</td></tr>').join('') + '</table>' +
-    '<p class="sub">Nilai FR per parameter</p><table>' +
-    CONFIG.frFields.map(fr => '<tr><td>' + esc(fr[1]) + '</td><td>' + fmt(p[fr[0]]) + '</td></tr>').join('') + '</table>';
-  $('info').innerHTML = html;
-
-  const hasDc = num(p[F.dc + '01']) !== null;
-  $('dcChart').hidden = !hasDc;
-  if (chart) { chart.destroy(); chart = null; }
-  if (hasDc && window.Chart) {
-    const vals = MON.map((_, i) => num(p[F.dc + pad(i + 1)]));
-    chart = new Chart($('dcChart'), {
-      type: 'line',
-      data: {
-        labels: MON.map(s => s.slice(0, 3)),
-        datasets: [{ data: vals, borderColor: '#14231C', backgroundColor: '#14231C', pointRadius: MON.map((_, i) => i + 1 === state.month ? 6 : 3), pointBackgroundColor: MON.map((_, i) => i + 1 === state.month ? '#1E5AA8' : '#14231C'), tension: 0.25, spanGaps: true }]
-      },
-      options: {
-        animation: false,
-        plugins: { legend: { display: false }, title: { display: true, text: 'Drought Code bulanan 2026' } },
-        scales: { y: { beginAtZero: true, title: { display: true, text: 'DC' } } }
-      }
-    });
-  }
-}
-function selectFeature(f) {
-  state.selected = f;
-  if (selLayer) map.removeLayer(selLayer);
-  selLayer = L.geoJSON(f, { style: { color: '#1E5AA8', weight: 3, fill: false }, interactive: false }).addTo(map);
-  renderInfo();
-}
-
-/* ================= 7. TITIK API ================= */
-function drawFire() {
-  if (fireLayer) { map.removeLayer(fireLayer); fireLayer = null; }
-  if (!fireData || !$('fireChk').checked) return;
-  const byMonth = CONFIG.fireMonthField && (state.mode === 'bahaya' || state.mode === 'dampak');
-  fireLayer = L.geoJSON(fireData, {
-    filter: f => !byMonth || num(f.properties[CONFIG.fireMonthField]) === state.month,
-    pointToLayer: (f, ll) => L.circleMarker(ll, { radius: 3, color: '#FFFFFF', weight: 1, fillColor: '#111111', fillOpacity: 1, interactive: false })
-  }).addTo(map);
-}
-
-/* ================= 8. PERBARUI SEMUA ================= */
-function refresh() {
-  $('monthLbl').textContent = MON[state.month - 1];
-  $('monthBox').hidden = !(state.mode === 'bahaya' || state.mode === 'dampak');
-  $('frBox').hidden = state.mode !== 'fr';
-  if (gridLayer) gridLayer.setStyle(style);
-  drawFire();
-  if (kabLayer) { $('kabChk').checked ? kabLayer.addTo(map) : map.removeLayer(kabLayer); }
-  renderLegend();
-  renderStats();
-  renderInfo();
-}
-
-/* ================= 9. KONTROL ================= */
-$('frSel').innerHTML = CONFIG.frFields.map(f => '<option value="' + esc(f[0]) + '">' + esc(f[1]) + '</option>').join('');
-$('month').max = CONFIG.lastMonth;
-$('month').value = state.month;
-$('mode').addEventListener('change', e => { state.mode = e.target.value; refresh(); });
-$('frSel').addEventListener('change', e => { state.fr = e.target.value; refresh(); });
-$('month').addEventListener('input', e => { state.month = Number(e.target.value); refresh(); });
-$('fireChk').addEventListener('change', refresh);
-$('kabChk').addEventListener('change', refresh);
-$('play').addEventListener('click', () => {
-  if (timer) { clearInterval(timer); timer = null; $('play').textContent = '▶ Putar'; return; }
-  $('play').textContent = '■ Berhenti';
-  timer = setInterval(() => {
-    state.month = state.month >= CONFIG.lastMonth ? 1 : state.month + 1;
-    $('month').value = state.month;
-    refresh();
-  }, 1500);
-});
-
-/* ================= 10. MUAT DATA ================= */
-const load = url => url ? fetch(url).then(r => { if (!r.ok) throw new Error(url + ' (' + r.status + ')'); return r.json(); }) : Promise.resolve(null);
-
-Promise.all([load(CONFIG.gridUrl), load(CONFIG.kabUrl).catch(() => null), load(CONFIG.fireUrl).catch(() => null)])
-  .then(([grid, kab, fire]) => {
-    gridData = grid;
-    gridLayer = L.geoJSON(grid, {
-      style: style,
-      onEachFeature: (f, layer) => layer.on('click', () => selectFeature(f))
-    }).addTo(map);
-    map.fitBounds(gridLayer.getBounds());
-    if (kab) kabLayer = L.geoJSON(kab, { style: { color: '#14231C', weight: 1.5, fill: false }, interactive: false });
-    else $('kabRow').hidden = true;
-    fireData = fire;
-    if (!fire) $('fireRow').hidden = true;
-    $('loading').remove();
-    refresh();
-  })
-  .catch(err => {
-    $('loading').innerHTML = 'Data gagal dimuat: ' + esc(err.message) +
-      '<br><br>Kalau file ini dibuka langsung dari komputer (double-click), browser memblokir pemuatan data. ' +
-      'Buka lewat GitHub Pages atau server lokal (mis. Live Server di VS Code).';
-  });
-</script>
-</body>
-</html>
+'use strict';
+// Ganti URL di sini bila nama/lokasi file pada repository berbeda.
+const CFG={grid:'data/grid.geojson',admin:'data/kab.geojson',fire:'data/titik_api_2014_2026.geojson',months:10,fireYear:'tahun',fireMonth:'bulan',gridKab:'kab',fields:{id:'grid_id',kab:'kab',rentan:'rentan',indeks:'indeks',history:'sip_nth',population:'pop',hazard:'bhy_',dc:'dc_'},fr:[['fr_tutup','Tutupan lahan'],['fr_ubah','Perubahan tutupan lahan'],['fr_ndmi','NDMI'],['fr_gambut','Gambut'],['fr_feg','FEG'],['fr_kanal','Kanal'],['fr_soc','SOC'],['fr_jalan','Jarak jalan'],['fr_sungai','Jarak sungai'],['fr_mukim','Jarak permukiman'],['fr_hujan','Curah hujan'],['fr_elev','Elevasi']]};
+const MONTHS=['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober'];const COLORS=['#fff2b2','#f8c46b','#ee8d3c','#d94c32','#941f27'];const POP=['#f1e8f4','#cdb9dc','#a487c1','#75569d','#422b65'];const FR=['#2166ac','#93b7d6','#f7f7f7','#f0a77a','#e66101'];const $=id=>document.getElementById(id);const esc=s=>String(s??'–').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));const n=v=>v===null||v===undefined||v===''||!Number.isFinite(Number(v))?null:Number(v);const fmt=(v,d=0)=>n(v)===null?'–':Number(v).toLocaleString('id-ID',{maximumFractionDigits:d,minimumFractionDigits:d});const pad=x=>String(x).padStart(2,'0');
+const state={mode:'rentan',hazMonth:1,year:'',month:'',kab:'',fr:CFG.fr[0][0]};let gridData,adminData,fireData=[],gridLayer,adminLayer,fireLayer,yearChart,monthChart;const map=L.map('map',{preferCanvas:true}).setView([0.5,102],7);const osm=L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'&copy; OpenStreetMap contributors'}).addTo(map);L.control.layers({'OpenStreetMap':osm},null,{position:'topright'}).addTo(map);L.control.scale({imperial:false}).addTo(map);
+function prop(p,names){if(!p)return null;const keys=Object.keys(p),norm=x=>String(x).toLowerCase().replace(/[^a-z0-9]/g,'');for(const name of names){if(p[name]!==undefined&&p[name]!==null)return p[name];const k=keys.find(x=>norm(x)===norm(name));if(k)return p[k]}return null}
+function regionName(p){return prop(p,[CFG.gridKab,'kabupaten','kab_kota','nama_kab','wadmkk','name_2','NAME_2','kabkota'])}
+const FR_ALIASES={fr_tutup:['fr_tutup','fr_tutupan'],fr_ubah:['fr_ubah','fr_perubahan'],fr_ndmi:['fr_ndmi'],fr_gambut:['fr_gambut'],fr_feg:['fr_feg'],fr_kanal:['fr_kanal'],fr_soc:['fr_soc'],fr_jalan:['fr_jalan'],fr_sungai:['fr_sungai'],fr_mukim:['fr_mukim','fr_permukiman'],fr_hujan:['fr_hujan'],fr_elev:['fr_elev']};
+function frVal(p,key){return n(prop(p,FR_ALIASES[key]||[key]))}function allFR(p){return CFG.fr.map(x=>frVal(p,x[0])).filter(x=>x!==null)}function indexValue(p){const explicit=n(prop(p,[CFG.fields.indeks,'indeks_fr','fr_index']));if(explicit!==null)return explicit;const vals=allFR(p);return vals.length?vals.reduce((a,b)=>a+b,0):null}
+function quantileBreaks(values){const a=values.filter(Number.isFinite).sort((x,y)=>x-y);if(!a.length)return[];return[.2,.4,.6,.8].map(q=>a[Math.min(a.length-1,Math.floor(q*(a.length-1)))]);}function classFrom(value,breaks){if(value===null)return null;let c=breaks.findIndex(b=>value<=b);return c<0?4:c;}
+function vulnerability(p){const raw=n(prop(p,[CFG.fields.rentan,'kelas_rentan','kelas_kerentanan']));if(raw!==null&&raw>=1&&raw<=5)return Math.round(raw)-1;return classFrom(indexValue(p),indexBreaks)}
+let indexBreaks=[],dcBreaks=[];
+function dcValue(p){return n(prop(p,[CFG.fields.dc+pad(state.hazMonth),'dc'+pad(state.hazMonth),'DC_'+pad(state.hazMonth)]))}function hazardValue(p){return n(prop(p,[CFG.fields.hazard+pad(state.hazMonth),'bahaya_'+pad(state.hazMonth),'kelas_bahaya_'+pad(state.hazMonth)]))}
+function valueColor(p){if(state.mode==='rentan'){const c=vulnerability(p);return c===null?null:COLORS[c]}if(state.mode==='bahaya'){const v=hazardValue(p);return v!==null&&v>=1&&v<=5?COLORS[Math.round(v)-1]:null}if(state.mode==='dc'){const c=classFrom(dcValue(p),dcBreaks);return c===null?null:COLORS[c]}if(state.mode==='pop'){const v=n(prop(p,[CFG.fields.population,'populasi','population']));if(v===null)return null;const max=Number.isFinite(POP_MAX)&&POP_MAX>0?POP_MAX:5000;return POP[Math.min(4,Math.floor(Math.max(0,v)/(max/5)))]}const v=frVal(p,state.fr);return v===null?null:v<.8?FR[0]:v<.95?FR[1]:v<1.05?FR[2]:v<1.2?FR[3]:FR[4]}
+let POP_MAX=5000;
+function visibleByRegion(f){return !state.kab||String(regionName(f.properties)||'').trim().toLowerCase()===state.kab.toLowerCase()}
+function gridStyle(f){const c=valueColor(f.properties);return{color:'#fff',weight:.35,opacity:c?.75:0,fillColor:c||'#000',fillOpacity:c?.82:0}}
+function setLegend(){let colors,labels,title;if(state.mode==='rentan'){colors=COLORS;labels=['Kelas 1','Kelas 2','Kelas 3','Kelas 4','Kelas 5'];title='Kerentanan'}else if(state.mode==='bahaya'){colors=COLORS;labels=['Sangat rendah','Rendah','Sedang','Tinggi','Sangat tinggi'];title='Bahaya · '+MONTHS[state.hazMonth-1]+' 2026'}else if(state.mode==='dc'){colors=COLORS;labels=dcBreaks.length?['≤ '+fmt(dcBreaks[0]),fmt(dcBreaks[0])+'–'+fmt(dcBreaks[1]),fmt(dcBreaks[1])+'–'+fmt(dcBreaks[2]),fmt(dcBreaks[2])+'–'+fmt(dcBreaks[3]),'> '+fmt(dcBreaks[3])]:['Belum ada nilai DC'];title='Drought Code · kuantil data'}else if(state.mode==='pop'){colors=POP;labels=['0–'+fmt(POP_MAX/5),fmt(POP_MAX/5)+'–'+fmt(2*POP_MAX/5),fmt(2*POP_MAX/5)+'–'+fmt(3*POP_MAX/5),fmt(3*POP_MAX/5)+'–'+fmt(4*POP_MAX/5),'> '+fmt(4*POP_MAX/5)];title='Penduduk per grid'}else{colors=FR;labels=['< 0,80','0,80–0,95','0,95–1,05','1,05–1,20','> 1,20'];title='FR · '+(CFG.fr.find(x=>x[0]===state.fr)?.[1]||state.fr)}$('legend').innerHTML='<b>'+esc(title)+'</b>'+colors.map((c,i)=>'<div class="legend-item"><span class="sw" style="background:'+c+'"></span>'+esc(labels[i])+'</div>').join('')}
+function setInfo(f){const p=f.properties,m=pad(state.hazMonth),rows=[['Kerentanan',vulnerability(p)===null?'–':'Kelas '+(vulnerability(p)+1)],['Indeks FR',fmt(indexValue(p),2)],['Riwayat terbakar (tahun)',fmt(prop(p,['sip_nth','tahun_terbakar']),0)],['Bahaya '+MONTHS[state.hazMonth-1],fmt(hazardValue(p),0)],['Drought Code',fmt(dcValue(p),0)],['Populasi',fmt(prop(p,[CFG.fields.population,'populasi','population']),0)],...CFG.fr.map(([k,label])=>[label,fmt(frVal(p,k),2)])];$('info').innerHTML='<b>Grid '+esc(prop(p,[CFG.fields.id,'id','gridid']))+' · '+esc(regionName(p)||'Wilayah tidak diketahui')+'</b><table>'+rows.map(r=>'<tr><td>'+esc(r[0])+'</td><td>'+esc(r[1])+'</td></tr>').join('')+'</table>';}
+function setRegionOptions(){const names=new Set();for(const f of (adminData?.features||[])){const x=regionName(f.properties)||prop(f.properties,['name','NAME','nama']);if(x)names.add(String(x).trim())}for(const f of gridData.features){const x=regionName(f.properties);if(x)names.add(String(x).trim())}const sel=$('kabSel');[...names].sort((a,b)=>a.localeCompare(b,'id')).forEach(x=>sel.add(new Option(x,x)))}
+function pointCoordinates(feature){const g=feature.geometry;if(!g)return null;if(g.type==='Point')return g.coordinates;if(g.type==='MultiPoint')return g.coordinates[0];return null}
+function pointInRing(pt,ring){const[x,y]=pt;let inside=false;for(let i=0,j=ring.length-1;i<ring.length;j=i++){const xi=ring[i][0],yi=ring[i][1],xj=ring[j][0],yj=ring[j][1];if(((yi>y)!==(yj>y))&&(x<(xj-xi)*(y-yi)/(yj-yi)+xi))inside=!inside}return inside}
+function pointInAdmin(pt,geometry){if(!pt||!geometry)return false;const polys=geometry.type==='Polygon'?[geometry.coordinates]:geometry.type==='MultiPolygon'?geometry.coordinates:[];return polys.some(poly=>pointInRing(pt,poly[0])&&!poly.slice(1).some(r=>pointInRing(pt,r)))}
+function assignFireRegions(){for(const f of fireData){let k=regionName(f.properties);if(k){f.properties.__region=String(k).trim();continue}const pt=pointCoordinates(f);if(pt){const hit=(adminData?.features||[]).find(a=>pointInAdmin(pt,a.geometry));if(hit)f.properties.__region=String(regionName(hit.properties)||prop(hit.properties,['name','NAME','nama'])||'').trim()}}}
+function fireYear(f){return n(prop(f.properties,[CFG.fireYear,'year','tahun','TAHUN']))}function fireMonth(f){return n(prop(f.properties,[CFG.fireMonth,'month','bulan','BULAN']))}function fireRegion(f){return f.properties.__region||regionName(f.properties)}
+function activeFires(){return fireData.filter(f=>(!state.year||fireYear(f)===Number(state.year))&&(!state.month||fireMonth(f)===Number(state.month))&&(!state.kab||String(fireRegion(f)||'').toLowerCase()===state.kab.toLowerCase()))}
+function drawFires(){if(fireLayer)map.removeLayer(fireLayer);if(!$('fireChk').checked)return;const features=activeFires();const cap=25000;const shown=features.length>cap?features.slice(0,cap):features;fireLayer=L.geoJSON({type:'FeatureCollection',features:shown},{renderer:L.canvas(),pointToLayer:(f,ll)=>L.circleMarker(ll,{radius:3,color:'#fff',weight:.5,fillColor:'#d83b25',fillOpacity:.85}),onEachFeature:(f,l)=>l.bindPopup('<b>Titik api</b><br>Tahun: '+esc(fireYear(f)??'–')+'<br>Bulan: '+esc(fireMonth(f)??'–')+'<br>'+esc(fireRegion(f)||'Wilayah tidak diketahui'))}).addTo(map);if(features.length>cap)$('legend').insertAdjacentHTML('beforeend','<p class="muted">Peta menampilkan '+fmt(cap)+' dari '+fmt(features.length)+' titik untuk menjaga performa.</p>')}
+function regionGrids(){return gridData.features.filter(visibleByRegion)}function renderKpis(){const gs=regionGrids(),fs=activeFires();let burned=0,pop=0,high=0;for(const f of gs){const p=f.properties;if((n(prop(p,[CFG.fields.history,'sip_nth']))||0)>0)burned++;pop+=n(prop(p,[CFG.fields.population,'populasi','population']))||0;const h=hazardValue(p);if(h!==null&&h>=4)high++}const districts=state.kab?1:new Set(gs.map(f=>regionName(f.properties)).filter(Boolean).map(x=>String(x).toLowerCase())).size;$('kFire').textContent=fmt(fs.length);$('kBurn').textContent=fmt(burned);$('kKab').textContent=fmt(districts);$('kPop').textContent=fmt(pop);$('kHigh').textContent=fmt(high)}
+function chartUpdate(){if(!window.Chart)return;const filtered=fireData.filter(f=>!state.kab||String(fireRegion(f)||'').toLowerCase()===state.kab.toLowerCase());const years=Array.from({length:13},(_,i)=>2014+i);const yc=years.map(y=>filtered.filter(f=>fireYear(f)===y).length);const selectedYear=Number(state.year)||2026;const mc=Array.from({length:12},(_,i)=>filtered.filter(f=>fireYear(f)===selectedYear&&fireMonth(f)===i+1).length);const base={responsive:true,maintainAspectRatio:false,animation:false,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,ticks:{precision:0}}}};if(yearChart){yearChart.data.datasets[0].data=yc;yearChart.update()}else yearChart=new Chart($('yearChart'),{type:'bar',data:{labels:years,datasets:[{data:yc,backgroundColor:'#d75a37'}]},options:{...base,plugins:{...base.plugins,title:{display:true,text:'Jumlah titik api per tahun'}}}});if(monthChart){monthChart.data.datasets[0].data=mc;monthChart.update()}else monthChart=new Chart($('monthChart'),{type:'bar',data:{labels:MONTHS,datasets:[{data:mc,backgroundColor:'#52745c'}]},options:{...base,plugins:{...base.plugins,title:{display:true,text:'Titik api per bulan · '+selectedYear}}}})}
+function refresh(){if(gridLayer){gridLayer.setStyle(gridStyle);gridLayer.eachLayer(l=>{if(visibleByRegion(l.feature))l.setStyle(gridStyle(l.feature));else l.setStyle({opacity:0,fillOpacity:0,weight:0})})}if(adminLayer){if(state.kab){adminLayer.eachLayer(l=>{const name=regionName(l.feature.properties)||prop(l.feature.properties,['name','NAME','nama']);if(String(name||'').toLowerCase()===state.kab.toLowerCase())l.setStyle({color:'#16291e',weight:2,fill:false,opacity:1});else l.setStyle({opacity:0,fillOpacity:0})})}}setLegend();drawFires();renderKpis();chartUpdate();$('frBox').hidden=state.mode!=='fr';$('hazMonthBox').hidden=!(state.mode==='bahaya'||state.mode==='dc');}
+function popupDetail(f){setInfo(f)}
+async function loadJSON(url,required=false){const r=await fetch(url);if(!r.ok){if(required)throw Error(url+' ('+r.status+')');return null}const d=await r.json();if(!d||d.type!=='FeatureCollection'||!Array.isArray(d.features)){if(required)throw Error(url+' bukan GeoJSON FeatureCollection. Jika berupa pointer Git LFS, Pages tidak bisa membaca data aslinya.');return null}return d}
+function setSelects(){for(let i=1;i<=CFG.months;i++)$('hazMonth').add(new Option(MONTHS[i-1],i));$('hazMonth').value='1';CFG.fr.forEach(([key,label])=>$('frSel').add(new Option(label,key)));for(let i=1;i<=12;i++)$('monthSel').add(new Option(MONTHS[i-1],i))}
+$('mode').addEventListener('change',e=>{state.mode=e.target.value;refresh()});$('hazMonth').addEventListener('change',e=>{state.hazMonth=Number(e.target.value);refresh()});$('frSel').addEventListener('change',e=>{state.fr=e.target.value;refresh()});$('kabSel').addEventListener('change',e=>{state.kab=e.target.value;refresh()});$('yearSel').addEventListener('change',e=>{state.year=e.target.value;refresh()});$('monthSel').addEventListener('change',e=>{state.month=e.target.value;refresh()});$('fireChk').addEventListener('change',refresh);$('kabChk').addEventListener('change',e=>{if(adminLayer){if(e.target.checked)adminLayer.addTo(map);else map.removeLayer(adminLayer)}});$('reset').addEventListener('click',()=>{$('kabSel').value='';$('yearSel').value='';$('monthSel').value='';$('mode').value='rentan';$('hazMonth').value='1';state.kab='';state.year='';state.month='';state.mode='rentan';state.hazMonth=1;refresh()});$('fit').addEventListener('click',()=>{if(gridLayer&&gridLayer.getBounds().isValid())map.fitBounds(gridLayer.getBounds(),{padding:[15,15]})});
+setSelects();
+Promise.all([loadJSON(CFG.grid,true),loadJSON(CFG.admin),loadJSON(CFG.fire)]).then(([grid,admin,fire])=>{gridData=grid;adminData=admin;fireData=fire?.features||[];if(!fire)$('fireChk').checked=false;indexBreaks=quantileBreaks(grid.features.map(f=>indexValue(f.properties)).filter(v=>v!==null));dcBreaks=quantileBreaks(grid.features.map(f=>{let vals=[];for(let i=1;i<=CFG.months;i++){const v=n(prop(f.properties,[CFG.fields.dc+pad(i)]));if(v!==null)vals.push(v)}return vals.length?vals.reduce((a,b)=>a+b,0)/vals.length:null}).filter(v=>v!==null));setRegionOptions();const years=[...new Set(fireData.map(fireYear).filter(y=>y!==null))].sort((a,b)=>a-b);for(const y of years)$('yearSel').add(new Option(y,y));assignFireRegions();const popvals=grid.features.map(f=>n(prop(f.properties,[CFG.fields.population,'populasi','population']))).filter(v=>v!==null);if(popvals.length)POP_MAX=Math.max(5000,...popvals);gridLayer=L.geoJSON(grid,{renderer:L.canvas(),style:gridStyle,onEachFeature:(f,l)=>l.on('click',()=>popupDetail(f))}).addTo(map);if(admin)adminLayer=L.geoJSON(admin,{style:{color:'#172d20',weight:1.2,fill:false,opacity:.8},interactive:false}).addTo(map);if(gridLayer.getBounds().isValid())map.fitBounds(gridLayer.getBounds(),{padding:[10,10]});$('loading').remove();refresh();if(!fireData.length)$('legend').insertAdjacentHTML('beforeend','<p class="error">Titik api tidak termuat. Unggah file GeoJSON biasa sebagai <code>'+esc(CFG.fire)+'</code>. File lama <code>titik_api_2026.geojson</code> di Git LFS adalah pointer, dan tidak mencakup riwayat 2014–2026.</p>')}).catch(err=>{$('loading').innerHTML='<div class="error"><b>Data grid gagal dimuat.</b><br>'+esc(err.message)+'<br><br>Pastikan <code>data/grid.geojson</code> berisi FeatureCollection GeoJSON yang valid dan semua URL dapat diakses melalui GitHub Pages.</div>'});
+</script></body></html>
